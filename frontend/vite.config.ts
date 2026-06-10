@@ -4,23 +4,28 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
+
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
   },
+
   server: {
     port: 3000,
     proxy: {
       '/api': {
-        target: import.meta.env.VITE_API_URL || 'https://pk-coporate.onrender.com',
+        target: 'https://pk-coporate.onrender.com',
         changeOrigin: true,
+        secure: true,
       },
     },
   },
+
   build: {
     outDir: 'dist',
     sourcemap: false,
+
     rollupOptions: {
       output: {
         manualChunks: {
