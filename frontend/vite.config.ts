@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 
 export default defineConfig(({ mode }) => {
-  const apiTarget = process.env.VITE_PROXY_TARGET || 'https://pk-coporate.onrender.com'
+  const apiTarget = process.env.VITE_PROXY_TARGET || 'https://pk-corporate-backend.onrender.com'
 
   return {
     plugins: [react()],

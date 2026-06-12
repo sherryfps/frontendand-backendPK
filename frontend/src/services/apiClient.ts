@@ -1,7 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@/store/authStore';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://pk-coporate.onrender.com';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://pk-corporate-backend.onrender.com';
 
 // Global variables to handle token refresh
 let isRefreshing = false;
