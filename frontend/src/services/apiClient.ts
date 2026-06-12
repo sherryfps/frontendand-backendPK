@@ -62,6 +62,8 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+import toast from 'react-hot-toast';
+
 // Response interceptor - handle 401 & token refresh & cache store
 apiClient.interceptors.response.use(
   (response: any) => {
@@ -74,6 +76,12 @@ apiClient.interceptors.response.use(
   },
   async (error: any) => {
     const originalRequest = error.config;
+
+    if (error.response?.status === 429) {
+      const msg = error.response.data?.message || 'Too many requests. Please wait before trying again.';
+      toast.error(msg);
+      return Promise.reject(error);
+    }
 
     if (error.response?.status === 401 && !originalRequest._retry) {
 

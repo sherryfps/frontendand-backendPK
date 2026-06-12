@@ -103,6 +103,7 @@ public class AuthService {
             throw new BusinessException("Reset token has expired. Please request a new one.");
         }
 
+        validatePasswordStrength(request.getPassword());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setResetPasswordToken(null);
         user.setResetPasswordExpiry(null);
@@ -117,8 +118,28 @@ public class AuthService {
             throw new BusinessException("Current password is incorrect");
         }
 
+        validatePasswordStrength(request.getNewPassword());
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
+    }
+
+    private void validatePasswordStrength(String password) {
+        if (password == null || password.length() < 8) {
+            throw new BusinessException("Password must be at least 8 characters long");
+        }
+        boolean hasUpper = false;
+        boolean hasLower = false;
+        boolean hasDigit = false;
+        boolean hasSpecial = false;
+        for (char c : password.toCharArray()) {
+            if (Character.isUpperCase(c)) hasUpper = true;
+            else if (Character.isLowerCase(c)) hasLower = true;
+            else if (Character.isDigit(c)) hasDigit = true;
+            else if (!Character.isLetterOrDigit(c)) hasSpecial = true;
+        }
+        if (!hasUpper || !hasLower || !hasDigit || !hasSpecial) {
+            throw new BusinessException("Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character");
+        }
     }
 
     private AuthResponse buildAuthResponse(User user, String accessToken, String refreshToken) {

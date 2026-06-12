@@ -1,9 +1,14 @@
 package com.pkcorporate.config;
 
 import com.pkcorporate.security.filter.JwtAuthenticationFilter;
+import com.pkcorporate.security.filter.RateLimitingFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
+
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -36,6 +41,9 @@ public class SecurityConfig {
 
     private final UserRepository userRepository;
     private final JwtAuthenticationFilter jwtAuthFilter;
+    private final RateLimitingFilter rateLimitingFilter;
+    @Value("${cors.allowed-origins:http://localhost:3000,http://localhost:5173}")
+    private String[] allowedOrigins;
 
     private static final String[] PUBLIC_URLS = {
             "/auth/**",
@@ -71,7 +79,32 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider())
+            .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        
+        // Security headers configuration
+        http.headers(headers -> {
+                // Content Security Policy
+                headers.contentSecurityPolicy(csp -> csp
+                        .policyDirectives("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; frame-ancestors 'none'; connect-src 'self'")
+                );
+                // X-Frame-Options DENY
+                headers.frameOptions(frame -> frame.deny());
+                // X-Content-Type-Options nosniff (enabled by default, but explicit)
+                headers.contentTypeOptions(cto -> {});
+                // HTTP Strict Transport Security
+                headers.httpStrictTransportSecurity(hsts -> hsts
+                        .maxAgeInSeconds(31536000)
+                        .includeSubDomains(true)
+                        .preload(true)
+                );
+                // Referrer Policy
+                headers.referrerPolicy(ref -> ref.policy(ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN));
+                // Permissions Policy
+                headers.permissionsPolicy(p -> p.policy("camera=(), microphone=(), geolocation=(), payment=()"));
+                // Remove Server header / technology disclosure
+                headers.addHeaderWriter(new StaticHeadersWriter("Server", ""));
+        });
 
         return http.build();
     }
@@ -79,9 +112,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("*"));
+        config.setAllowedOrigins(Arrays.asList(allowedOrigins));
+        // Restrict to necessary HTTP methods
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
+        // Whitelist required headers only
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-Request-ID"));
+        // Enable credentials only if required by your authentication mechanism
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
 

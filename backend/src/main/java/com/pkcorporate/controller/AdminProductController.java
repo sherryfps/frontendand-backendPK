@@ -28,6 +28,13 @@ public class AdminProductController {
     private final ProductService productService;
 
     @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping
+    @Operation(summary = "Get all products (active + inactive) for admin management")
+    public ResponseEntity<ApiResponse<List<ProductResponse>>> getAll() {
+        return ResponseEntity.ok(ApiResponse.success(productService.getAllProducts()));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Create a new product with multiple images")
     public ResponseEntity<ApiResponse<ProductResponse>> create(

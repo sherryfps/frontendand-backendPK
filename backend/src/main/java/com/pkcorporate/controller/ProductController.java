@@ -1,8 +1,8 @@
 package com.pkcorporate.controller;
 
 import com.pkcorporate.dto.response.ApiResponse;
-import com.pkcorporate.entity.TShirtProduct;
-import com.pkcorporate.repository.TShirtProductRepository;
+import com.pkcorporate.dto.response.ProductResponse;
+import com.pkcorporate.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +19,12 @@ import java.util.List;
 @Tag(name = "Product Catalog", description = "Product endpoints for catalog browsing")
 public class ProductController {
 
-    private final TShirtProductRepository productRepository;
+    private final ProductService productService;
 
     @GetMapping
     @Operation(summary = "Get all active products in catalog")
-    public ResponseEntity<ApiResponse<List<TShirtProduct>>> getActiveProducts() {
-        List<TShirtProduct> products = productRepository.findByActiveTrue();
+    public ResponseEntity<ApiResponse<List<ProductResponse>>> getActiveProducts() {
+        List<ProductResponse> products = productService.getActiveProducts();
         return ResponseEntity.ok(ApiResponse.success(products));
     }
 }

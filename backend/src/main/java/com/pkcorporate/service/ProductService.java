@@ -140,8 +140,16 @@ public class ProductService {
         return toResponse(product);
     }
 
-    public List<TShirtProduct> getActiveProducts() {
-        return productRepository.findByActiveTrue();
+    public List<ProductResponse> getActiveProducts() {
+        return productRepository.findByActiveTrue().stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public List<ProductResponse> getAllProducts() {
+        return productRepository.findAll().stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     // ─── Internals ─────────────────────────────────────────────
@@ -160,6 +168,22 @@ public class ProductService {
         for (int i = 0; i < safe.size(); i++) {
             MultipartFile file = safe.get(i);
             if (file.isEmpty()) continue;
+
+            // Validate MIME type, extension and file size
+            String contentType = file.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                throw new BusinessException("Only image files are allowed");
+            }
+            String originalFilename = file.getOriginalFilename();
+            if (originalFilename != null && originalFilename.contains(".")) {
+                String ext = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
+                if (!List.of("jpg", "jpeg", "png", "webp", "gif").contains(ext)) {
+                    throw new BusinessException("Invalid image file extension: " + ext);
+                }
+            }
+            if (file.getSize() > 10 * 1024 * 1024) {
+                throw new BusinessException("Image file size exceeds limit of 10MB");
+            }
 
             try {
                 Map<String, String> up = cloudinaryService.uploadImage(file, "products");

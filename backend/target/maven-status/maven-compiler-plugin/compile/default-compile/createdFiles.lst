@@ -56,6 +56,7 @@ com\pkcorporate\dto\response\OrderResponse$AgentInfo$AgentInfoBuilder.class
 com\pkcorporate\dto\response\OrderResponse$OrderResponseBuilder.class
 com\pkcorporate\entity\Notification$NotificationBuilder.class
 com\pkcorporate\entity\User.class
+com\pkcorporate\controller\EmailTestController.class
 com\pkcorporate\repository\OrderRepository.class
 com\pkcorporate\dto\response\OrderResponse$DesignerInfo.class
 com\pkcorporate\config\CloudinaryConfig.class
@@ -86,6 +87,7 @@ com\pkcorporate\dto\response\DashboardDTOs$DesignerStatsResponse$DesignOrderInfo
 com\pkcorporate\entity\Dispatch$DispatchBuilder.class
 com\pkcorporate\dto\response\DashboardDTOs$AgentStatsResponse$RecentOrderInfo$RecentOrderInfoBuilder.class
 com\pkcorporate\repository\UserRepository.class
+com\pkcorporate\security\filter\RateLimitingFilter.class
 com\pkcorporate\security\filter\JwtAuthenticationFilter.class
 com\pkcorporate\entity\Inventory$InventoryBuilder.class
 com\pkcorporate\entity\Production.class
@@ -111,6 +113,7 @@ com\pkcorporate\config\AuditConfig.class
 com\pkcorporate\PkCorporateApplication.class
 com\pkcorporate\repository\NotificationRepository.class
 com\pkcorporate\repository\InventoryRepository.class
+com\pkcorporate\security\filter\RateLimitingFilter$TokenBucket.class
 com\pkcorporate\dto\response\ProductResponse.class
 com\pkcorporate\service\UserService.class
 com\pkcorporate\service\CustomerService.class

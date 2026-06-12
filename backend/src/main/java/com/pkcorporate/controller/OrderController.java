@@ -96,6 +96,7 @@ public class OrderController {
             @PathVariable UUID id,
             @RequestParam("files") List<MultipartFile> files,
             @AuthenticationPrincipal User user) throws Exception {
+        validateUploadedFiles(files);
         List<String> urls = new ArrayList<>();
         for (MultipartFile file : files) {
             var result = cloudinaryService.uploadFile(file, "logos/" + id);
@@ -111,6 +112,7 @@ public class OrderController {
     public ResponseEntity<ApiResponse<OrderResponse>> uploadReferences(
             @PathVariable UUID id,
             @RequestParam("files") List<MultipartFile> files) throws Exception {
+        validateUploadedFiles(files);
         List<String> urls = new ArrayList<>();
         for (MultipartFile file : files) {
             var result = cloudinaryService.uploadFile(file, "references/" + id);
@@ -136,6 +138,7 @@ public class OrderController {
     public ResponseEntity<ApiResponse<OrderResponse>> uploadMockups(
             @PathVariable UUID id,
             @RequestParam("files") List<MultipartFile> files) throws Exception {
+        validateUploadedFiles(files);
         List<String> urls = new ArrayList<>();
         for (MultipartFile file : files) {
             var result = cloudinaryService.uploadFile(file, "mockups/" + id);
@@ -143,5 +146,26 @@ public class OrderController {
         }
         return ResponseEntity.ok(ApiResponse.success("Mockups uploaded",
                 orderService.uploadMockups(id, urls)));
+    }
+
+    private void validateUploadedFiles(List<MultipartFile> files) {
+        if (files == null) return;
+        for (MultipartFile file : files) {
+            if (file.isEmpty()) continue;
+            String contentType = file.getContentType();
+            if (contentType == null || (!contentType.startsWith("image/") && !contentType.equals("application/pdf"))) {
+                throw new com.pkcorporate.exception.BusinessException("Only image files and PDFs are allowed");
+            }
+            String name = file.getOriginalFilename();
+            if (name != null && name.contains(".")) {
+                String ext = name.substring(name.lastIndexOf(".") + 1).toLowerCase();
+                if (!List.of("jpg", "jpeg", "png", "webp", "gif", "pdf").contains(ext)) {
+                    throw new com.pkcorporate.exception.BusinessException("Invalid file extension: " + ext);
+                }
+            }
+            if (file.getSize() > 10 * 1024 * 1024) {
+                throw new com.pkcorporate.exception.BusinessException("File size exceeds limit of 10MB");
+            }
+        }
     }
 }

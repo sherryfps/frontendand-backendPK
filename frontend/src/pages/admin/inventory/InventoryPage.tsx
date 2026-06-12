@@ -27,7 +27,7 @@ export default function InventoryPage() {
   const filtered = products.filter(p =>
     !search ||
     p.name?.toLowerCase().includes(search.toLowerCase()) ||
-    p.code?.toLowerCase().includes(search.toLowerCase()) ||
+    p.productCode?.toLowerCase().includes(search.toLowerCase()) ||
     p.category?.toLowerCase().includes(search.toLowerCase())
   )
 
@@ -85,7 +85,7 @@ export default function InventoryPage() {
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <h3 className="text-sm font-bold text-gray-900 dark:text-white">{product.name}</h3>
-                  <p className="text-xs text-gray-400 font-mono">{product.code}</p>
+                  <p className="text-xs text-gray-400 font-mono">{product.productCode}</p>
                 </div>
                 <span className={`px-2 py-0.5 rounded-lg text-xs font-semibold ${product.active ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-500'}`}>
                   {product.active ? 'Active' : 'Inactive'}
@@ -99,7 +99,7 @@ export default function InventoryPage() {
                   <div className="flex items-center gap-1">
                     <span className="font-medium text-gray-700 dark:text-gray-300">Colors:</span>
                     {product.availableColors.slice(0, 6).map((c, i) => (
-                      <div key={i} className="w-4 h-4 rounded-full border border-gray-200" style={{ backgroundColor: c.hex }} title={c.name} />
+                      <div key={i} className="w-4 h-4 rounded-full border border-gray-200" style={{ backgroundColor: c }} title={c} />
                     ))}
                     {product.availableColors.length > 6 && <span className="text-gray-400 ml-1">+{product.availableColors.length - 6}</span>}
                   </div>
