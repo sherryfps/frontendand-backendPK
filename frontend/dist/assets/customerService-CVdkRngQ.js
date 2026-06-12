@@ -1,1 +1,0 @@
-import{a as c}from"./index-C3rCo9cF.js";const m={createCustomer:async t=>{var s;const a=await c.post("/v1/customers",t);return((s=a.data)==null?void 0:s.data)??a.data},getCustomers:async(t,a=0,s=10)=>{var o;const e={page:a,size:s};t&&(e.query=t);const r=await c.get("/v1/customers",{params:e});return((o=r.data)==null?void 0:o.data)??r.data}};export{m as c};
