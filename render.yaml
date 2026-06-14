@@ -46,6 +46,8 @@ services:
         sync: false
       - key: MAX_FILE_SIZE
         value: 10MB
+      - key: FRONTEND_URL
+        value: https://frontend-phi-lemon-czqwlgh8ug.vercel.app
       - key: MAX_REQUEST_SIZE
         value: 20MB
 
