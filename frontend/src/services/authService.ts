@@ -19,13 +19,13 @@ export interface AuthResponse {
 }
 
 // ─── Demo users for frontend-only mode (no backend required) ───
-const DEMO_USERS: Record<string, { password: string; name: string; role: string; id: string }> = {
+// Only included in development builds — tree-shaken from production
+const DEMO_USERS: Record<string, { password: string; name: string; role: string; id: string }> = import.meta.env.DEV ? {
   'admin@pkcorporate.com':       { password: 'Admin@123',  name: 'Admin User',  role: 'ADMIN',      id: 'demo-admin-001' },
   'agent@pkcorporate.com':       { password: 'Agent@123',  name: 'Ravi Kumar',  role: 'AGENT',      id: 'demo-agent-001' },
   'accountant@pkcorporate.com':  { password: 'Acc@123',    name: 'Priya Shah',  role: 'ACCOUNTANT', id: 'demo-acc-001'   },
   'designer@pkcorporate.com':    { password: 'Design@123', name: 'Arjun Mehta', role: 'DESIGNER',   id: 'demo-des-001'   },
-  'sherry':                      { password: 'sherry',     name: 'Sherry Test', role: 'ADMIN',      id: 'demo-sherry-001'},
-}
+} : {}
 
 const VITE_API_URL = import.meta.env.VITE_API_URL
 const VITE_BACKEND_MOCK = import.meta.env.VITE_BACKEND_MOCK

@@ -127,9 +127,12 @@ public class RateLimitingFilter extends OncePerRequestFilter {
 
     private String getClientIP(HttpServletRequest request) {
         String xfHeader = request.getHeader("X-Forwarded-For");
-        if (xfHeader == null) {
+        if (xfHeader == null || xfHeader.isBlank()) {
             return request.getRemoteAddr();
         }
-        return xfHeader.split(",")[0].trim();
+        // Use the LAST IP in the chain — the one appended by the trusted reverse proxy.
+        // The first IP is client-supplied and can be easily spoofed.
+        String[] ips = xfHeader.split(",");
+        return ips[ips.length - 1].trim();
     }
 }

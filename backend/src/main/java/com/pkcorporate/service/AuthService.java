@@ -36,11 +36,13 @@ public class AuthService {
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
         } catch (BadCredentialsException e) {
+            // Constant-time delay to prevent email enumeration via timing
+            try { Thread.sleep(100); } catch (InterruptedException ignored) { Thread.currentThread().interrupt(); }
             throw new BusinessException("Invalid email or password");
         }
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new BusinessException("User not found"));
+                .orElseThrow(() -> new BusinessException("Invalid email or password"));
 
         if (!user.isActive()) {
             throw new BusinessException("Account is deactivated. Contact administrator.");
@@ -63,6 +65,14 @@ public class AuthService {
                 .orElseThrow(() -> new BusinessException("Invalid refresh token"));
 
         if (!jwtService.isTokenValid(refreshToken)) {
+            throw new BusinessException("Refresh token expired. Please login again.");
+        }
+
+        // Validate DB-side expiry as well (allows server-side revocation)
+        if (user.getRefreshTokenExpiry() == null || user.getRefreshTokenExpiry().isBefore(LocalDateTime.now())) {
+            user.setRefreshToken(null);
+            user.setRefreshTokenExpiry(null);
+            userRepository.save(user);
             throw new BusinessException("Refresh token expired. Please login again.");
         }
 

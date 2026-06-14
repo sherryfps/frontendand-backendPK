@@ -6,12 +6,14 @@ import com.pkcorporate.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
+@Profile({"dev", "demo"})
 public class DataSeeder implements CommandLineRunner {
 
     private final UserRepository userRepository;
@@ -27,8 +29,8 @@ public class DataSeeder implements CommandLineRunner {
         createUserIfNotExists("Ravi Kumar", "agent@pkcorporate.com", "Agent@123", Role.AGENT, "AGT-001");
         createUserIfNotExists("Priya Shah", "accountant@pkcorporate.com", "Acc@123", Role.ACCOUNTANT, null);
         createUserIfNotExists("Arjun Mehta", "designer@pkcorporate.com", "Design@123", Role.DESIGNER, null);
-        createUserIfNotExists("Sherry Test", "sherry", "sherry", Role.ADMIN, null);
-        log.info("✅ PK Corporate ERP — Demo users seeded successfully");
+        // NOTE: Backdoor account 'sherry/sherry' removed for security
+        log.info("✅ PK Corporate ERP — Demo users seeded successfully (dev/demo profile only)");
     }
 
     private void createUserIfNotExists(String name, String email, String password, Role role, String agentCode) {

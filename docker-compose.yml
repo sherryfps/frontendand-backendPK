@@ -35,7 +35,7 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/pk_corporate
       DB_USERNAME: postgres
       DB_PASSWORD: ${DB_PASSWORD:-vegeta@123}
-      JWT_SECRET: ${JWT_SECRET:-pk-corporate-jwt-secret-key-2024-minimum-256-bits}
+      JWT_SECRET: ${JWT_SECRET:-cGtjb3Jwb3JhdGVkZXZlbG9wbWVudHNlY3JldGtleTI1Ng==}
       JWT_ACCESS_EXPIRY: 900000
       JWT_REFRESH_EXPIRY: 604800000
       CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}

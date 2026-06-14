@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.Mac;
@@ -46,6 +47,7 @@ public class PaymentController {
     private String keySecret;
 
     @PostMapping("/create-order")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGENT', 'ACCOUNTANT')")
     @Operation(summary = "Create Razorpay checkout order transaction")
     public ResponseEntity<?> createOrder(@RequestBody Map<String, String> request) {
         String orderIdStr = request.get("orderId");
@@ -112,6 +114,7 @@ public class PaymentController {
     }
 
     @PostMapping("/verify")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ACCOUNTANT')")
     @Operation(summary = "Verify Razorpay payment signature and record invoice status")
     public ResponseEntity<?> verifyPayment(@RequestBody Map<String, String> request) {
         String razorpayOrderId = request.get("razorpayOrderId");

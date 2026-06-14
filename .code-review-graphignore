@@ -1,0 +1,17 @@
+node_modules/
+target/
+dist/
+.git/
+.code-review-graph/
+*.min.js
+*.min.css
+*.bundle.js
+*.map
+*.pyc
+__pycache__/
+vendor/
+build/
+.next/
+.nuxt/
+out/
+coverage/
