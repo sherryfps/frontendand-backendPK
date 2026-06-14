@@ -71,6 +71,12 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         String ip = getClientIP(request);
         String user = request.getHeader("X-User-ID");
 
+        // Bypass rate limiting for local development and local testing
+        if (ip.equals("127.0.0.1") || ip.equals("0:0:0:0:0:0:0:1") || ip.equalsIgnoreCase("localhost")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String limitKey;
         long capacity;
         long periodMs;

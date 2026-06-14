@@ -122,7 +122,7 @@ export default function Sidebar({ role, mobileOpen, onMobileClose }: SidebarProp
     toast.success('Logged out successfully')
   }
 
-  const sidebarContent = (
+  const renderSidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Logo */}
       <div className="h-16 flex items-center px-4 border-b border-gray-100 dark:border-gray-800 shrink-0">
@@ -133,6 +133,7 @@ export default function Sidebar({ role, mobileOpen, onMobileClose }: SidebarProp
           <AnimatePresence>
             {!sidebarCollapsed && (
               <motion.div
+                key="sidebar-logo"
                 initial={{ opacity: 0, width: 0 }}
                 animate={{ opacity: 1, width: 'auto' }}
                 exit={{ opacity: 0, width: 0 }}
@@ -158,6 +159,7 @@ export default function Sidebar({ role, mobileOpen, onMobileClose }: SidebarProp
       <AnimatePresence>
         {!sidebarCollapsed && (
           <motion.div
+            key="role-badge"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -179,6 +181,7 @@ export default function Sidebar({ role, mobileOpen, onMobileClose }: SidebarProp
             <AnimatePresence>
               {!sidebarCollapsed && section.title && (
                 <motion.div
+                  key={`section-heading-${section.title || sectionIdx}`}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -212,6 +215,7 @@ export default function Sidebar({ role, mobileOpen, onMobileClose }: SidebarProp
                   <AnimatePresence>
                     {!sidebarCollapsed && (
                       <motion.span
+                        key={`label-${item.path}`}
                         initial={{ opacity: 0, width: 0 }}
                         animate={{ opacity: 1, width: 'auto' }}
                         exit={{ opacity: 0, width: 0 }}
@@ -239,6 +243,7 @@ export default function Sidebar({ role, mobileOpen, onMobileClose }: SidebarProp
           <AnimatePresence>
             {!sidebarCollapsed && (
               <motion.div
+                key="user-footer"
                 initial={{ opacity: 0, width: 0 }}
                 animate={{ opacity: 1, width: 'auto' }}
                 exit={{ opacity: 0, width: 0 }}
@@ -252,6 +257,7 @@ export default function Sidebar({ role, mobileOpen, onMobileClose }: SidebarProp
           <AnimatePresence>
             {!sidebarCollapsed && (
               <motion.button
+                key="logout-btn"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -285,23 +291,17 @@ export default function Sidebar({ role, mobileOpen, onMobileClose }: SidebarProp
         transition={{ duration: 0.3, ease: 'easeInOut' }}
         className="hidden lg:flex flex-col fixed left-0 top-0 h-full bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 z-30 overflow-hidden"
       >
-        {sidebarContent}
+        {renderSidebarContent()}
       </motion.aside>
 
       {/* Mobile Sidebar */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.aside
-            initial={{ x: -280 }}
-            animate={{ x: 0 }}
-            exit={{ x: -280 }}
-            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="flex lg:hidden flex-col fixed left-0 top-0 h-full w-64 bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 z-30"
-          >
-            {sidebarContent}
-          </motion.aside>
-        )}
-      </AnimatePresence>
+      <aside
+        className={`flex lg:hidden flex-col fixed left-0 top-0 h-full w-64 bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 z-30 transition-all duration-300 ease-in-out ${
+          mobileOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0 pointer-events-none'
+        }`}
+      >
+        {renderSidebarContent()}
+      </aside>
     </>
   )
 }

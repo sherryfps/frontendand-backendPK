@@ -140,12 +140,14 @@ public class ProductService {
         return toResponse(product);
     }
 
+    @Transactional(readOnly = true)
     public List<ProductResponse> getActiveProducts() {
         return productRepository.findByActiveTrue().stream()
                 .map(this::toResponse)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<ProductResponse> getAllProducts() {
         return productRepository.findAll().stream()
                 .map(this::toResponse)

@@ -27,17 +27,12 @@ export default function DashboardLayout({ role }: { role: Role }) {
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-950">
       {/* Mobile overlay */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setMobileOpen(false)}
-            className="fixed inset-0 bg-black/50 z-20 lg:hidden"
-          />
-        )}
-      </AnimatePresence>
+      {mobileOpen && (
+        <div
+          onClick={() => setMobileOpen(false)}
+          className="fixed inset-0 bg-black/50 z-20 lg:hidden"
+        />
+      )}
 
       {/* Sidebar */}
       <Sidebar
