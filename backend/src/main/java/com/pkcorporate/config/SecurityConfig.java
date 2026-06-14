@@ -111,16 +111,18 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        List<String> normalized = new java.util.ArrayList<>();
+        List<String> patterns = new java.util.ArrayList<>();
         for (String origin : allowedOrigins) {
             String trimmed = origin.trim();
             String noSlash = trimmed.endsWith("/") ? trimmed.substring(0, trimmed.length() - 1) : trimmed;
             if (!noSlash.isEmpty()) {
-                normalized.add(noSlash);
-                normalized.add(noSlash + "/");
+                patterns.add(noSlash);
+                patterns.add(noSlash + "/");
             }
         }
-        config.setAllowedOrigins(normalized);
+        patterns.add("https://*.vercel.app");
+        patterns.add("https://*.vercel.app/");
+        config.setAllowedOriginPatterns(patterns);
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With"));
         config.setExposedHeaders(Arrays.asList("Authorization", "Content-Disposition"));

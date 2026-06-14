@@ -40,7 +40,7 @@ public class CorsFilterConfig implements Filter {
         String origin = request.getHeader("Origin");
         if (origin != null) {
             String normalizedOrigin = origin.endsWith("/") ? origin.substring(0, origin.length() - 1) : origin;
-            if (allowedOrigins.contains(normalizedOrigin)) {
+            if (allowedOrigins.contains(normalizedOrigin) || (normalizedOrigin.startsWith("https://") && normalizedOrigin.endsWith(".vercel.app"))) {
                 response.setHeader("Access-Control-Allow-Origin", origin);
                 response.setHeader("Access-Control-Allow-Credentials", "true");
             }
