@@ -47,7 +47,7 @@ services:
       - key: MAX_FILE_SIZE
         value: 10MB
       - key: CORS_ORIGINS
-        value: http://localhost:3000,http://localhost:5173,https://frontend-phi-lemon-czqwlgh8ug.vercel.app,https://pkfrontend.vercel.app
+        value: http://localhost:3000,http://localhost:5173,https://frontend-phi-lemon-czqwlgh8ug.vercel.app,https://frontend-phi-lemon-czqwlgh8ug.vercel.app/,https://pkfrontend.vercel.app,https://pkfrontend.vercel.app/
       - key: MAX_REQUEST_SIZE
         value: 20MB
 

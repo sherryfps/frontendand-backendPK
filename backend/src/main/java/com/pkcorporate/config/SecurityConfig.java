@@ -111,7 +111,16 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList(allowedOrigins));
+        List<String> normalized = new java.util.ArrayList<>();
+        for (String origin : allowedOrigins) {
+            String trimmed = origin.trim();
+            String noSlash = trimmed.endsWith("/") ? trimmed.substring(0, trimmed.length() - 1) : trimmed;
+            if (!noSlash.isEmpty()) {
+                normalized.add(noSlash);
+                normalized.add(noSlash + "/");
+            }
+        }
+        config.setAllowedOrigins(normalized);
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With"));
         config.setExposedHeaders(Arrays.asList("Authorization", "Content-Disposition"));

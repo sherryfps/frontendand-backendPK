@@ -26,6 +26,7 @@ public class CorsFilterConfig implements Filter {
     public CorsFilterConfig(@Value("${cors.allowed-origins:http://localhost:3000,http://localhost:5173,https://frontend-phi-lemon-czqwlgh8ug.vercel.app,https://pkfrontend.vercel.app}") String[] origins) {
         this.allowedOrigins = Arrays.stream(origins)
                 .map(String::trim)
+                .map(origin -> origin.endsWith("/") ? origin.substring(0, origin.length() - 1) : origin)
                 .collect(Collectors.toSet());
     }
 
@@ -37,9 +38,12 @@ public class CorsFilterConfig implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
 
         String origin = request.getHeader("Origin");
-        if (origin != null && allowedOrigins.contains(origin)) {
-            response.setHeader("Access-Control-Allow-Origin", origin);
-            response.setHeader("Access-Control-Allow-Credentials", "true");
+        if (origin != null) {
+            String normalizedOrigin = origin.endsWith("/") ? origin.substring(0, origin.length() - 1) : origin;
+            if (allowedOrigins.contains(normalizedOrigin)) {
+                response.setHeader("Access-Control-Allow-Origin", origin);
+                response.setHeader("Access-Control-Allow-Credentials", "true");
+            }
         }
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD");
         response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept, Origin, X-Requested-With");
