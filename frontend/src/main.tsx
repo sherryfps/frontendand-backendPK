@@ -4,15 +4,14 @@ import { BrowserRouter } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import App from './App'
 import './index.css'
-import { warmUpBackend } from './services/apiClient'
-
-// Wake up the backend immediately (Render free-tier cold start mitigation)
-warmUpBackend()
+import BackendWarmup from './components/ui/BackendWarmup'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <BackendWarmup>
+        <App />
+      </BackendWarmup>
       <Toaster
         position="top-right"
         toastOptions={{

@@ -28,7 +28,7 @@ const getCache = new Map<string, { data: any; timestamp: number }>();
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: { 'Content-Type': 'application/json' },
-  timeout: 30000,
+  timeout: 60000,
 });
 
 // Request interceptor - attach token & check cache
@@ -76,6 +76,17 @@ apiClient.interceptors.response.use(
   },
   async (error: any) => {
     const originalRequest = error.config;
+
+    // ── Retry on timeout / network errors (up to 2 retries) ──
+    const isRetryable =
+      !error.response && (error.code === 'ECONNABORTED' || error.message?.includes('Network Error'));
+    const retryCount = originalRequest._retryCount || 0;
+    if (isRetryable && retryCount < 2) {
+      originalRequest._retryCount = retryCount + 1;
+      const delay = 3000 * Math.pow(2, retryCount); // 3s, 6s
+      await new Promise(r => setTimeout(r, delay));
+      return apiClient(originalRequest);
+    }
 
     if (error.response?.status === 429) {
       const msg = error.response.data?.message || 'Too many requests. Please wait before trying again.';
@@ -126,33 +137,5 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-// ─── Warm-up ping to wake Render free-tier backend ───
-let warmUpSent = false;
-export const warmUpBackend = () => {
-  if (warmUpSent) return;
-  warmUpSent = true;
-
-  const MAX_RETRIES = 5;
-  const RETRY_DELAY = 10000; // 10 seconds between retries
-  let attempt = 0;
-
-  const ping = () => {
-    attempt++;
-    console.log(`[PK] Waking backend (attempt ${attempt}/${MAX_RETRIES})...`);
-    axios.get(`${API_BASE_URL}/actuator/health`, { timeout: 60000 })
-      .then(() => console.log('[PK] Backend warm ✓'))
-      .catch(() => {
-        if (attempt < MAX_RETRIES) {
-          console.log(`[PK] Backend still starting... retrying in ${RETRY_DELAY / 1000}s`);
-          setTimeout(ping, RETRY_DELAY);
-        } else {
-          console.warn('[PK] Backend did not respond after max retries. It may still be deploying on Render.');
-        }
-      });
-  };
-
-  ping();
-};
 
 export default apiClient;
