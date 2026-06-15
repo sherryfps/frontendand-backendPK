@@ -17,11 +17,11 @@ import java.util.UUID;
 public interface TShirtProductRepository extends JpaRepository<TShirtProduct, UUID> {
     Optional<TShirtProduct> findByProductCode(String productCode);
 
-    @EntityGraph(attributePaths = {"images", "availableColors", "availableSizes", "printTypes"})
+    @EntityGraph(attributePaths = {"images"})
     @Query("SELECT DISTINCT p FROM TShirtProduct p WHERE p.active = true")
     List<TShirtProduct> findByActiveTrue();
 
-    @EntityGraph(attributePaths = {"images", "availableColors", "availableSizes", "printTypes"})
+    @EntityGraph(attributePaths = {"images"})
     @Query("SELECT DISTINCT p FROM TShirtProduct p")
     List<TShirtProduct> findAllWithCollections();
 
